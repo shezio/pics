@@ -483,7 +483,7 @@ for masechet, chapters in masechtot.items():
 today = dt.now()
 start_date = today - timedelta(days=total_chapters_start)
 
-
+# start_date = dt(2023, 9, 2)
 # Calculate the total number of chapters until "עוקצין פרק ג"
 total_chapters_end = 0
 for masechet, chapters in masechtot.items():
@@ -566,7 +566,7 @@ html = """
         <script type="text/javascript">
             window.onload = function() {
                 var img = document.createElement("img");
-                img.src = "https://cdn.pixabay.com/photo/2024/01/16/14/36/14-36-45-433_1280.png";
+                img.src = "https://raw.githubusercontent.com/shezio/pics/main/AMIT2.png";
                 img.width = 800;
                 // Append the image to the body of the document
                 document.getElementById("2024").appendChild(img);
