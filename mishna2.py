@@ -563,24 +563,24 @@ html = """
                 background-color: #f2f2f2;
             }
         </style>
-        <script type="text/javascript">
-            window.onload = function() {
-                var img = document.createElement("img");
-                img.src = "https://raw.githubusercontent.com/shezio/pics/main/AMIT2.png";
-                img.width = 800;
-                // Append the image to the body of the document
-                document.getElementById("2024").appendChild(img);
-            }
-        </script>
+            <script type="text/javascript">
+                window.onload = function() {
+                    var img = document.createElement("img");
+                    img.src = "https://raw.githack.com/shezio/pics/main/AMIT2.png";
+                    img.width = 800;
+                    // Append the image to the body of the document
+                    document.getElementById("2024").appendChild(img);
+                }
+            </script>
     </head>
 <body>
-<div style="display: flex; gap: 25px; width: 100%; margin-bottom: 15px; justify-content: space-between;">
-    <div style="margin-inline-start: 50px; margin-block-start: 100px;">
-        <h1>לוח שנה לפרקי משנה</h1>
-        <h2>לעילוי נשמת עמית בן נועה בונצל הי"ד מפקד ולוחם שנפל בקרב בעזה</h2>
+    <div style="display: flex; gap: 25px; width: 100%; margin-bottom: 15px; flex-direction: column-reverse; align-items: center;">
+        <div style="margin-inline-start: 50px;">
+            <h1 style="margin-bottom: 10px;">לוח שנה לפרקי משנה</h1>
+            <h2 style="margin-top: 10px;">לעילוי נשמת עמית בן נועה בונצל הי"ד מפקד ולוחם שנפל בקרב בעזה</h2>
+        </div>
+        <div id="2024"></div>
     </div>
-    <div id="2024"></div>
-</div>
 <table border='1'>
 """
 
