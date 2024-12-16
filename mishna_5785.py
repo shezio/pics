@@ -482,7 +482,11 @@ for masechet, chapters in masechtot.items():
 # Calculate the start date based on today's date and the total number of chapters
 today = dt.now()
 # start_date = today - timedelta(days=total_chapters_start)
+# TODO: Change this date to the day after we finish shas
+# Every time we finish shas - change this date to the day after we finish
+# Next start date: 18.7.2026
 start_date = dt(2025, 2, 8)
+
 
 # start_date = dt(2023, 9, 2)
 # Calculate the total number of chapters until "עוקצין פרק ג"
@@ -520,11 +524,11 @@ def get_daily_mishna(date): # pylint: disable=unused-variable redefined-outer-na
     curr_masechet = None
     curr_chapter = None
     for get_masechet, get_chapters in masechtot.items():
-        if days_since_start < total_chapters + len(chapters):
+        if days_since_start < total_chapters + len(get_chapters):
             curr_masechet = get_masechet
             curr_chapter = get_chapters[days_since_start - total_chapters]
             break
-        total_chapters += len(chapters)
+        total_chapters += len(get_chapters)
     return curr_masechet, curr_chapter
 
 
@@ -629,11 +633,12 @@ for year in range(start_date.year, end_date.year + 1):
                     if start_date <= date <= end_date:
                         daily_mishna = get_daily_mishna(date)
                         hebrew_date = get_hebrew_date(date)
-                        html += f"<td style='background-color: white; color: blue;'>\
-                            {date.strftime('%d.%m.%Y')}<br>\
-                                {hebrew_date}<br>{hebrew_days[date.weekday()]}\
-                                    <br>הפרק היומי הוא {daily_mishna[0]} \
-                                        {daily_mishna[1]}</td>"
+                        if daily_mishna[0] is not None and daily_mishna[1] is not None:
+                            html += f"<td style='background-color: white; color: blue;'>\
+                                {date.strftime('%d.%m.%Y')}<br>\
+                                    {hebrew_date}<br>{hebrew_days[date.weekday()]}\
+                                        <br>הפרק היומי הוא {daily_mishna[0]} \
+                                            {daily_mishna[1]}</td>"
                     else:
                         html += "<td></td>"
                 else:
