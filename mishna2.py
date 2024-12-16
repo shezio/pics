@@ -481,7 +481,8 @@ for masechet, chapters in masechtot.items():
 
 # Calculate the start date based on today's date and the total number of chapters
 today = dt.now()
-start_date = today - timedelta(days=total_chapters_start)
+#start_date = today - timedelta(days=total_chapters_start)
+start_date = dt(2025, 2, 8)
 
 # start_date = dt(2023, 9, 2)
 # Calculate the total number of chapters until "עוקצין פרק ג"
