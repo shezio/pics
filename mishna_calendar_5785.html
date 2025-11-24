@@ -46,8 +46,10 @@
                   let day = String(today.getDate()).padStart(2, '0');
                   let month = String(today.getMonth() + 1).padStart(2, '0');
                   let year = today.getFullYear();
-                  //let todayStr = day + '.' + month + '.' + year;
-                  let todayStr = '24.11.2025';  // Hardcode for testing; revert to dynamic code after
+                  let todayStr = day + '.' + month + '.' + year;
+                  //let todayStr = '24.11.2025';  // Hardcode for testing; revert to dynamic code after
+                   console.log("todayStr");
+                   console.log(todayStr);
                   let tds = document.getElementsByTagName('td');
                   for (let td of tds) {
                       if (td.textContent.includes(todayStr)) {
