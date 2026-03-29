@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>מעקב דפי גמרא</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: white;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    .masechet {
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .masechet h2 {
+      margin-top: 0;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      padding-bottom: 5px;
+    }
+
+    .pages {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    label {
+      background: rgba(255,255,255,0.15);
+      padding: 5px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: 0.2s;
+    }
+
+    label:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    input[type="checkbox"] {
+      margin-left: 4px;
+      transform: scale(1.1);
+    }
+
+    .progress {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>📖 מעקב דפי גמרא</h1>
+
+<div class="container" id="app"></div>
+
+<script>
+const masechtot = {
+  "ברכות": 64,
+  "שבת": 157,
+  "עירובין": 105,
+  "פסחים": 121,
+  "שקלים": 22,
+  "יומא": 88,
+  "סוכה": 56,
+  "ביצה": 40,
+  "ראש השנה": 35,
+  "תענית": 31,
+  "מגילה": 32,
+  "מועד קטן": 29,
+  "חגיגה": 27,
+  "יבמות": 122,
+  "כתובות": 112,
+  "נדרים": 91,
+  "נזיר": 66,
+  "סוטה": 49,
+  "גיטין": 90,
+  "קידושין": 82,
+  "בבא קמא": 119,
+  "בבא מציעא": 119,
+  "בבא בתרא": 176,
+  "סנהדרין": 113,
+  "מכות": 24,
+  "שבועות": 49,
+  "עבודה זרה": 76,
+  "הוריות": 14,
+  "זבחים": 120,
+  "מנחות": 110,
+  "חולין": 142,
+  "בכורות": 61,
+  "ערכין": 34,
+  "תמורה": 34,
+  "כריתות": 28,
+  "מעילה": 22,
+  "תמיד": 10,
+  "נידה": 73
+};
+
+const container = document.getElementById("app");
+
+function saveState(id, checked) {
+  localStorage.setItem(id, checked);
+}
+
+function loadState(id) {
+  return localStorage.getItem(id) === "true";
+}
+
+Object.entries(masechtot).forEach(([name, pages]) => {
+  const div = document.createElement("div");
+  div.className = "masechet";
+
+  const title = document.createElement("h2");
+  title.innerText = name;
+
+  const progress = document.createElement("div");
+  progress.className = "progress";
+
+  const pagesDiv = document.createElement("div");
+  pagesDiv.className = "pages";
+
+  let checkedCount = 0;
+
+  for (let i = 2; i <= pages; i++) {
+    const id = `${name}-${i}`;
+
+    const label = document.createElement("label");
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = loadState(id);
+
+    if (checkbox.checked) checkedCount++;
+
+    checkbox.addEventListener("change", () => {
+      saveState(id, checkbox.checked);
+      updateProgress();
+    });
+
+    label.appendChild(checkbox);
+    label.appendChild(document.createTextNode(`דף ${i}`));
+
+    pagesDiv.appendChild(label);
+  }
+
+  function updateProgress() {
+    const total = pages - 1;
+    const checked = pagesDiv.querySelectorAll("input:checked").length;
+    progress.innerText = `התקדמות: ${checked}/${total}`;
+  }
+
+  updateProgress();
+
+  div.appendChild(title);
+  div.appendChild(progress);
+  div.appendChild(pagesDiv);
+
+  container.appendChild(div);
+});
+</script>
+
+</body>
+</html>
