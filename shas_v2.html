@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>מעקב ש״ס</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: linear-gradient(135deg,#1e3c72,#2a5298);
+  color: white;
+  margin:0;
+  padding:20px;
+}
+h1 { text-align:center; }
+
+.masechet {
+  background: rgba(255,255,255,0.1);
+  border-radius:10px;
+  padding:12px;
+  margin-bottom:12px;
+}
+
+.pages {
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+
+label {
+  background: rgba(255,255,255,0.15);
+  padding:4px 6px;
+  border-radius:6px;
+  font-size:12px;
+  cursor:pointer;
+}
+
+button {
+  display:block;
+  margin:15px auto;
+  padding:8px 16px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<h1>📖 מעקב ש״ס</h1>
+<button onclick="hardReset()">איפוס מוחלט</button>
+
+<div id="app"></div>
+
+<script>
+// 🔥 namespace חדש לגמרי
+const STORAGE_PREFIX = "shas_v2_";
+
+// סדר מסכתות
+const masechtot = [
+  ["ברכות",64],
+  ["שבת",157],
+  ["עירובין",105],
+  ["פסחים",121],
+  ["שקלים",22],
+  ["יומא",88],
+  ["סוכה",56],
+  ["ביצה",40],
+  ["ראש השנה",35],
+  ["תענית",31],
+  ["מגילה",32],
+  ["מועד קטן",29],
+  ["חגיגה",27],
+  ["יבמות",122],
+  ["כתובות",112],
+  ["נדרים",91],
+  ["נזיר",66],
+  ["סוטה",49],
+  ["גיטין",90],
+  ["קידושין",82],
+  ["בבא קמא",119],
+  ["בבא מציעא",119],
+  ["בבא בתרא",176],
+  ["סנהדרין",113],
+  ["מכות",24],
+  ["שבועות",49],
+  ["עבודה זרה",76],
+  ["הוריות",14],
+  ["זבחים",120],
+  ["מנחות",110],
+  ["חולין",142],
+  ["בכורות",61],
+  ["ערכין",34],
+  ["תמורה",34],
+  ["כריתות",28],
+  ["מעילה",22],
+  ["תמיד",10],
+  ["נידה",73]
+];
+
+// המרות לעברית
+const heb = ["","א","ב","ג","ד","ה","ו","ז","ח","ט","י","יא","יב","יג","יד","טו","טז","יז","יח","יט","כ","כא","כב","כג","כד","כה","כו","כז","כח","כט","ל","לא","לב","לג","לד","לה","לו","לז","לח","לט","מ","מא","מב","מג","מד","מה","מו","מז","מח","מט","נ","נא","נב","נג","נד","נה","נו","נז","נח","נט","ס","סא","סב","סג","סד","סה","סו","סז","סח","סט","ע","עא","עב","עג","עד","עה","עו","עז","עח","עט","פ","פא","פב","פג","פד","פה","פו","פז","פח","פט","צ","צא","צב","צג","צד","צה","צו","צז","צח","צט","ק","קא","קב","קג","קד","קה","קו","קז","קח","קט","קי","קיא","קיב","קיג","קיד","קטו","קטז","קיז","קיח","קיט","קכ","קכא","קכב","קכג","קכד","קכה","קכו","קכז","קכח","קכט","קל","קלא","קלב","קלג","קלד","קלה","קלו","קלז","קלח","קלט","קמ","קמא","קמב","קמג","קמד","קמה","קמו","קמז","קמח","קמט","קנ","קנא","קנב","קנג","קנד","קנה","קנו","קנז","קנח","קנט","קס","קסא","קסב","קסג","קסד","קסה","קסו","קסז","קסח","קסט","קע","קעא","קעב","קעג","קעד","קעה","קעו"];
+
+// 🎯 לוגיקה התחלתית נכונה
+function defaultChecked(name, daf, amud){
+  if(name === "סוכה"){
+    if(daf < 21) return true;
+    if(daf > 21) return false;
+    return amud === 0; // רק כ״א א
+  }
+
+  const before = ["ברכות","שבת","עירובין","פסחים","שקלים","יומא"];
+  if(before.includes(name)) return true;
+
+  return false;
+}
+
+// storage
+function key(id){ return STORAGE_PREFIX + id; }
+
+function load(id,name,daf,amud){
+  const v = localStorage.getItem(key(id));
+  if(v !== null) return v === "true";
+  return defaultChecked(name,daf,amud);
+}
+
+function save(id,val){
+  localStorage.setItem(key(id),val);
+}
+
+// איפוס אמיתי
+function hardReset(){
+  Object.keys(localStorage).forEach(k=>{
+    if(k.startsWith(STORAGE_PREFIX)){
+      localStorage.removeItem(k);
+    }
+  });
+  location.reload();
+}
+
+// build
+const app = document.getElementById("app");
+
+masechtot.forEach(([name,total])=>{
+
+  const div = document.createElement("div");
+  div.className="masechet";
+
+  const h = document.createElement("h2");
+  h.innerText=name;
+
+  const pages = document.createElement("div");
+  pages.className="pages";
+
+  for(let i=2;i<=total;i++){
+    [0,1].forEach(amud=>{
+
+      const id = `${name}-${i}-${amud}`;
+
+      const label = document.createElement("label");
+      const cb = document.createElement("input");
+
+      cb.type="checkbox";
+      cb.checked = load(id,name,i,amud);
+
+      cb.onchange=()=> save(id,cb.checked);
+
+      label.appendChild(cb);
+      label.appendChild(document.createTextNode(
+        amud===0 ? `${heb[i]}.` : `${heb[i]}:`
+      ));
+
+      pages.appendChild(label);
+    });
+  }
+
+  div.appendChild(h);
+  div.appendChild(pages);
+  app.appendChild(div);
+});
+</script>
+
+</body>
+</html>
