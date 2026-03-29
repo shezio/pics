@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>מעקב דפי גמרא</title>
+  <title>מעקב ש״ס</title>
 
   <style>
     body {
@@ -28,19 +28,16 @@
       border-radius: 12px;
       padding: 15px;
       margin-bottom: 15px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
 
     .masechet h2 {
       margin-top: 0;
-      border-bottom: 1px solid rgba(255,255,255,0.2);
-      padding-bottom: 5px;
     }
 
     .pages {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 6px;
     }
 
     label {
@@ -48,29 +45,40 @@
       padding: 5px 8px;
       border-radius: 6px;
       cursor: pointer;
-      font-size: 13px;
-      transition: 0.2s;
+      font-size: 12px;
     }
 
     label:hover {
       background: rgba(255,255,255,0.3);
     }
 
-    input[type="checkbox"] {
+    input {
       margin-left: 4px;
-      transform: scale(1.1);
     }
 
     .progress {
       font-size: 12px;
       opacity: 0.8;
+      margin-bottom: 8px;
+    }
+
+    button {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
     }
   </style>
 </head>
 
 <body>
 
-<h1>📖 מעקב דפי גמרא</h1>
+<h1>📖 מעקב ש״ס</h1>
+
+<button onclick="resetAll()">איפוס הכל</button>
 
 <div class="container" id="app"></div>
 
@@ -116,66 +124,90 @@ const masechtot = {
   "נידה": 73
 };
 
-const container = document.getElementById("app");
+const heb = [
+"", "א","ב","ג","ד","ה","ו","ז","ח","ט",
+"י","יא","יב","יג","יד","טו","טז","יז","יח","יט",
+"כ","כא","כב","כג","כד","כה","כו","כז","כח","כט",
+"ל","לא","לב","לג","לד","לה","לו","לז","לח","לט",
+"מ","מא","מב","מג","מד","מה","מו","מז","מח","מט",
+"נ","נא","נב","נג","נד","נה","נו","נז","נח","נט",
+"ס","סא","סב","סג","סד","סה","סו","סז","סח","סט",
+"ע","עא","עב","עג","עד","עה","עו","עז","עח","עט",
+"פ","פא","פב","פג","פד","פה","פו","פז","פח","פט",
+"צ","צא","צב","צג","צד","צה","צו","צז","צח","צט",
+"ק","קא","קב","קג","קד","קה","קו","קז","קח","קט",
+"קי","קיא","קיב","קיג","קיד","קטו","קטז","קיז","קיח","קיט",
+"קכ","קכא","קכב","קכג","קכד","קכה","קכו","קכז","קכח","קכט",
+"קל","קלא","קלב","קלג","קלד","קלה","קלו","קלז","קלח","קלט",
+"קמ","קמא","קמב","קמג","קמד","קמה","קמו","קמז","קמח","קמט",
+"קנ","קנא","קנב","קנג","קנד","קנה","קנו","קנז","קנח","קנט",
+"קס","קסא","קסב","קסג","קסד","קסה","קסו","קסז","קסח","קסט",
+"קע","קעא","קעב","קעג","קעד","קעה","קעו"
+];
 
-function saveState(id, checked) {
-  localStorage.setItem(id, checked);
+function save(id,val){ localStorage.setItem(id,val); }
+function load(id){ return localStorage.getItem(id)==="true"; }
+
+function resetAll(){
+  localStorage.clear();
+  location.reload();
 }
 
-function loadState(id) {
-  return localStorage.getItem(id) === "true";
-}
+const app = document.getElementById("app");
 
-Object.entries(masechtot).forEach(([name, pages]) => {
+Object.entries(masechtot).forEach(([name,total])=>{
+
   const div = document.createElement("div");
-  div.className = "masechet";
+  div.className="masechet";
 
   const title = document.createElement("h2");
-  title.innerText = name;
+  title.innerText=name;
 
   const progress = document.createElement("div");
-  progress.className = "progress";
+  progress.className="progress";
 
   const pagesDiv = document.createElement("div");
-  pagesDiv.className = "pages";
+  pagesDiv.className="pages";
 
-  let checkedCount = 0;
+  for(let i=2;i<=total;i++){
+    const hebNum = heb[i];
 
-  for (let i = 2; i <= pages; i++) {
-    const id = `${name}-${i}`;
+    ["."," :"].forEach((side,index)=>{
 
-    const label = document.createElement("label");
+      const id = `${name}-${i}-${index}`;
 
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.checked = loadState(id);
+      const label = document.createElement("label");
+      const cb = document.createElement("input");
 
-    if (checkbox.checked) checkedCount++;
+      cb.type="checkbox";
+      cb.checked = load(id);
 
-    checkbox.addEventListener("change", () => {
-      saveState(id, checkbox.checked);
-      updateProgress();
+      cb.onchange=()=>{
+        save(id,cb.checked);
+        update();
+      };
+
+      label.appendChild(cb);
+      label.appendChild(document.createTextNode(
+        index===0 ? `${hebNum}.` : `${hebNum}:`
+      ));
+
+      pagesDiv.appendChild(label);
     });
-
-    label.appendChild(checkbox);
-    label.appendChild(document.createTextNode(`דף ${i}`));
-
-    pagesDiv.appendChild(label);
   }
 
-  function updateProgress() {
-    const total = pages - 1;
-    const checked = pagesDiv.querySelectorAll("input:checked").length;
-    progress.innerText = `התקדמות: ${checked}/${total}`;
+  function update(){
+    const totalPages = (total-1)*2;
+    const done = pagesDiv.querySelectorAll("input:checked").length;
+    progress.innerText = `התקדמות: ${done}/${totalPages}`;
   }
 
-  updateProgress();
+  update();
 
   div.appendChild(title);
   div.appendChild(progress);
   div.appendChild(pagesDiv);
-
-  container.appendChild(div);
+  app.appendChild(div);
 });
 </script>
 
