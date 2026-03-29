@@ -146,8 +146,33 @@ const heb = [
 ];
 
 function save(id,val){ localStorage.setItem(id,val); }
-function load(id){ return localStorage.getItem(id)==="true"; }
+function isBeforeTarget(name, daf) {
+  const order = [
+    "ברכות","שבת","עירובין","פסחים","שקלים","יומא","סוכה"
+  ];
 
+  const targetMasechet = "סוכה";
+  const targetDaf = 21;
+
+  const currentIndex = order.indexOf(name);
+  const targetIndex = order.indexOf(targetMasechet);
+
+  if (currentIndex < targetIndex) return true;
+  if (currentIndex > targetIndex) return false;
+
+  return daf <= targetDaf;
+}
+
+function load(id, name, daf){
+  const saved = localStorage.getItem(id);
+
+  if (saved !== null) {
+    return saved === "true";
+  }
+
+  // אם אין שמירה – קבע לפי ההתקדמות הראשונית
+  return isBeforeTarget(name, daf);
+}
 function resetAll(){
   localStorage.clear();
   location.reload();
@@ -180,7 +205,7 @@ Object.entries(masechtot).forEach(([name,total])=>{
       const cb = document.createElement("input");
 
       cb.type="checkbox";
-      cb.checked = load(id);
+      cb.checked = load(id, name, i);
 
       cb.onchange=()=>{
         save(id,cb.checked);
